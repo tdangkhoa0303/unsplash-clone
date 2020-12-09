@@ -1,20 +1,31 @@
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import clsx from "clsx";
 
-import { Box, Button, useMediaQuery, Grid } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  useMediaQuery,
+  Grid,
+  Avatar,
+  IconButton,
+} from "@material-ui/core";
 import {
   MoreHoriz,
   Menu as MenuIcon,
   Twitter,
   Facebook,
   Instagram,
+  Notifications,
 } from "@material-ui/icons";
-import { Search } from "./";
-import { Link } from "react-router-dom";
-import { MenuItem, MenuList, Menu } from "./UI/";
+
+import { Link as RawLink } from "react-router-dom";
+import { MenuItem, MenuList, Menu, Link } from "./UI/";
 
 import Logo from "../assets/logo.svg";
-import clsx from "clsx";
+import { Search } from "./";
+
+import Context from "../Context";
 
 const items = {
   mobile: [
@@ -43,6 +54,21 @@ const items = {
     { title: "Made with Unsplash", url: "/made with unsplash" },
     { title: "API/Developers", url: "/api/developers" },
     { title: "Official Apps", url: "/official apps" },
+  ],
+};
+
+const accountMenu = {
+  mobile: [
+    { title: "Notifications", url: "/?notifications=show" },
+    { title: "View profile", url: "/profile" },
+    { title: "Stats", url: "/stats" },
+    { title: "Account settings", url: "/settings" },
+  ],
+
+  desktop: [
+    { title: "View profile", url: "/profile" },
+    { title: "Stats", url: "/stats" },
+    { title: "Account settings", url: "/settings" },
   ],
 };
 
@@ -98,6 +124,7 @@ const useStyles = makeStyles((theme) => ({
   withSeperator: {
     position: "relative",
     marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(4),
 
     "&:before": {
       position: "absolute",
@@ -113,6 +140,7 @@ const useStyles = makeStyles((theme) => ({
   menuItem: {
     padding: theme.spacing(1, 2),
     color: "#ffffff",
+    flexWrap: "nowrap",
 
     "&:hover": {
       color: "hsla(0,0%,100%,.6)",
@@ -131,6 +159,7 @@ const useStyles = makeStyles((theme) => ({
     "& > li": {
       position: "relative",
       padding: theme.spacing(1),
+      fontSize: theme.spacing(1.5),
     },
 
     "& > li:first-child": {
@@ -157,16 +186,29 @@ const useStyles = makeStyles((theme) => ({
 
   menu: {
     display: " block",
+    minWidth: theme.spacing(25),
   },
 
   mbMenu: {
-    [theme.breakpoints.down("md")]: {
-      padding: 0,
+    padding: 0,
 
-      "& > li": {
-        paddingRight: 0,
-      },
+    "& > li": {
+      paddingRight: 0,
     },
+  },
+
+  avatar: {
+    height: theme.spacing(3.5),
+    width: theme.spacing(3.5),
+
+    "& > *": {
+      width: "100%",
+      height: "100%",
+    },
+  },
+
+  rowReverse: {
+    flexDirection: "row-reverse",
   },
 }));
 
@@ -177,6 +219,10 @@ function Header() {
   const classes = useStyles();
 
   const data = md ? items.desktop : items.mobile;
+
+  const {
+    auth: { isAuth, user },
+  } = useContext(Context);
 
   return (
     <Fragment>
@@ -189,7 +235,7 @@ function Header() {
         >
           <Box className={classes.grow} display="flex">
             <Box
-              component={Link}
+              component={RawLink}
               to="/"
               color="inherit"
               display="flex"
@@ -206,143 +252,222 @@ function Header() {
                 <span>Photos for everyone</span>
               </Box>
             </Box>
-            <Search />
+            <Box mx={2} className={classes.grow}>
+              <Search />
+            </Box>
           </Box>
-          <MenuList className={classes.mbMenu}>
-            {md && (
-              <Fragment>
-                <MenuItem>
-                  <Link to="/brands">
-                    Brands <span className={classes.new}>New</span>
-                  </Link>
-                </MenuItem>
-                <MenuItem>
-                  <Link to="/explore">Explore</Link>
-                </MenuItem>
-              </Fragment>
-            )}
-            <MenuItem>
-              <Menu
-                Trigger={md ? MoreHoriz : MenuIcon}
-                anchor={md ? "left" : "right"}
-              >
-                <Box component="ul" m={0} p={0} className={classes.menu}>
-                  {data.map((item, i) => (
-                    <MenuItem className={classes.menuItem} key={i}>
-                      <Link to={item.url}>{item.title}</Link>
+          <Box
+            display="flex"
+            alignItems="center"
+            className={clsx(!md && classes.rowReverse)}
+          >
+            <MenuList className={clsx(!md && classes.mbMenu)}>
+              {md && (
+                <Fragment>
+                  <MenuItem>
+                    <Link to="/brands">
+                      Brands <span className={classes.new}>New</span>
+                    </Link>
+                  </MenuItem>
+                  <MenuItem>
+                    <Link to="/explore">Explore</Link>
+                  </MenuItem>
+                </Fragment>
+              )}
+              <MenuItem>
+                <Menu Trigger={md ? MoreHoriz : MenuIcon} anchor="right">
+                  <Box component="ul" m={0} p={0} className={classes.menu}>
+                    {data.map((item, i) => (
+                      <MenuItem className={classes.menuItem} key={i}>
+                        <Link variant="dark" to={item.url}>
+                          {item.title}
+                        </Link>
+                      </MenuItem>
+                    ))}
+                    <MenuItem className={classes.menuItem}>
+                      <Box component="ul" m={0} p={0}>
+                        <MenuItem
+                          className={clsx(classes.menuItem, classes.social)}
+                        >
+                          <Link variant="dark" to="/">
+                            <Twitter color="inherit" />
+                          </Link>
+                        </MenuItem>
+                        <MenuItem
+                          className={clsx(classes.menuItem, classes.social)}
+                        >
+                          <Link variant="dark" to="/">
+                            <Facebook color="inherit" />
+                          </Link>
+                        </MenuItem>
+                        <MenuItem
+                          className={clsx(classes.menuItem, classes.social)}
+                        >
+                          <Link variant="dark" to="/">
+                            <Instagram color="inherit" />
+                          </Link>
+                        </MenuItem>
+                      </Box>
                     </MenuItem>
-                  ))}
-                  <MenuItem className={classes.menuItem}>
-                    <Box component="ul" m={0} p={0}>
-                      <MenuItem
-                        className={clsx(classes.menuItem, classes.social)}
-                      >
-                        <Link to="/">
-                          <Twitter color="inherit" />
+                    {!md && !isAuth && (
+                      <Box px={2.5} py={1} color="#111111">
+                        <Grid spacing={1} container>
+                          <Grid item xs={6}>
+                            <Button
+                              component={RawLink}
+                              to="login"
+                              variant="contained"
+                              color="secondary"
+                              className={classes.grow}
+                            >
+                              Login
+                            </Button>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              component={RawLink}
+                              to="/join"
+                              className={classes.grow}
+                            >
+                              Join free
+                            </Button>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              className={classes.grow}
+                              component={RawLink}
+                              to={{
+                                pathname: "/submit",
+                                state: { modal: true },
+                              }}
+                            >
+                              Submit a photo
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    )}
+                    <hr />
+                    <Box
+                      component="ul"
+                      m={0}
+                      p={0}
+                      className={classes.menuFooter}
+                      display="flex"
+                    >
+                      <MenuItem className={classes.menuItem}>
+                        <Link variant="dark" to="/">
+                          Help
                         </Link>
                       </MenuItem>
-                      <MenuItem
-                        className={clsx(classes.menuItem, classes.social)}
-                      >
-                        <Link to="/">
-                          <Facebook color="inherit" />
+                      <MenuItem className={classes.menuItem}>
+                        <Link variant="dark" to="/">
+                          License
                         </Link>
                       </MenuItem>
-                      <MenuItem
-                        className={clsx(classes.menuItem, classes.social)}
-                      >
-                        <Link to="/">
-                          <Instagram color="inherit" />
+                      <MenuItem className={classes.menuItem}>
+                        <Link variant="dark" to="/">
+                          Press
+                        </Link>
+                      </MenuItem>
+                      <MenuItem className={classes.menuItem}>
+                        <Link variant="dark" to="/">
+                          Join the team
                         </Link>
                       </MenuItem>
                     </Box>
-                  </MenuItem>
+                  </Box>
+                </Menu>
+              </MenuItem>
+            </MenuList>
+            {md && (
+              <Box display="flex" alignItems="center">
+                <Box mr={3}>
+                  <Button
+                    variant="outlined"
+                    component={RawLink}
+                    to={{ pathname: "/submit", state: { modal: true } }}
+                  >
+                    {lg ? "Submit a photo" : "Submit"}
+                  </Button>
+                </Box>
+                {isAuth ? (
+                  <Box mr={2}>
+                    <IconButton>
+                      <Notifications />
+                    </IconButton>
+                  </Box>
+                ) : (
+                  <Fragment>
+                    <Button
+                      component={RawLink}
+                      to="login"
+                      className={classes.withSeperator}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      component={RawLink}
+                      to="/join"
+                    >
+                      Join free
+                    </Button>
+                  </Fragment>
+                )}
+              </Box>
+            )}
+            {isAuth && (
+              <Menu
+                Trigger={(props) => (
+                  <Box className={classes.avatar} {...props}>
+                    <Avatar src={user.avatar && user.avatar.url} />
+                  </Box>
+                )}
+                anchor="right"
+              >
+                <Box component="ul" m={0} p={0} className={classes.menu}>
+                  {Object.values(
+                    md ? accountMenu.desktop : accountMenu.mobile
+                  ).map((item, i) => (
+                    <MenuItem className={classes.menuItem} key={i}>
+                      <Link variant="dark" to={item.url}>
+                        {item.title}
+                      </Link>
+                    </MenuItem>
+                  ))}
                   {!md && (
                     <Box px={2.5} py={1} color="#111111">
                       <Grid spacing={1} container>
-                        <Grid item xs={6}>
-                          <Button
-                            component={Link}
-                            to="login"
-                            variant="contained"
-                            color="secondary"
-                            className={classes.grow}
-                          >
-                            Login
-                          </Button>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            component={Link}
-                            to="/join"
-                            className={classes.grow}
-                          >
-                            Join free
-                          </Button>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Button
-                            variant="contained"
-                            color="secondary"
-                            className={classes.grow}
-                          >
-                            Submit a photo
-                          </Button>
-                        </Grid>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          className={classes.grow}
+                          component={RawLink}
+                          to={{ pathname: "/submit", state: { modal: true } }}
+                        >
+                          Submit a photo
+                        </Button>
                       </Grid>
                     </Box>
                   )}
                   <hr />
-                  <Box
-                    component="ul"
-                    m={0}
-                    p={0}
-                    className={classes.menuFooter}
-                    display="flex"
-                  >
+                  <Box className={classes.menu} display="flex" p={0} m={0}>
                     <MenuItem className={classes.menuItem}>
-                      <Link to="/">Help</Link>
-                    </MenuItem>
-                    <MenuItem className={classes.menuItem}>
-                      <Link to="/">License</Link>
-                    </MenuItem>
-                    <MenuItem className={classes.menuItem}>
-                      <Link to="/">Press</Link>
-                    </MenuItem>
-                    <MenuItem className={classes.menuItem}>
-                      <Link to="/">Join the team</Link>
+                      <Link variant="dark" to="/">
+                        Logout&nbsp;@{user.userName}
+                      </Link>
                     </MenuItem>
                   </Box>
                 </Box>
               </Menu>
-            </MenuItem>
-          </MenuList>
-          {md && (
-            <Box display="flex">
-              <Box mr={6}>
-                <Button variant="outlined">
-                  {lg ? "Submit a photo" : "Submit"}
-                </Button>
-              </Box>
-              <Button
-                component={Link}
-                to="login"
-                className={classes.withSeperator}
-              >
-                Login
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                component={Link}
-                to="/join"
-              >
-                Join free
-              </Button>
-            </Box>
-          )}
+            )}
+          </Box>
         </Box>
       </header>
     </Fragment>

@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Search() {
+function Search({ className }) {
   const classes = useStyles();
   const [search, setSearch] = useState("");
 
@@ -107,44 +107,40 @@ function Search() {
   };
 
   return (
-    <Box ml={2} className={classes.grow}>
-      <Box
-        component="form"
-        display="flex"
-        autoComplete="off"
-        className={classes.searchContainer}
-        alignItems="center"
-      >
-        <Button type="submit" className={classes.button}>
-          <SearchIcon />
-        </Button>
-        <InputBase
-          placeholder={
-            lg ? "Search free high-resolution photos" : "Search photos"
-          }
-          className={classes.search}
-          value={search}
-          onChange={handleSearchChange}
-        />
-        {search && (
-          <Close className={classes.button} onClick={handleClearing} />
-        )}
+    <Box
+      component="form"
+      display="flex"
+      autoComplete="off"
+      className={clsx(classes.searchContainer, className)}
+      alignItems="center"
+    >
+      <Button type="submit" className={classes.button}>
+        <SearchIcon />
+      </Button>
+      <InputBase
+        placeholder={
+          lg ? "Search free high-resolution photos" : "Search photos"
+        }
+        className={classes.search}
+        value={search}
+        onChange={handleSearchChange}
+      />
+      {search && <Close className={classes.button} onClick={handleClearing} />}
 
-        {data && search && (
-          <List className={clsx(classes.list)}>
-            {data.map((suggest, i) => (
-              <ListItem
-                key={i}
-                className={classes.listItem}
-                component={Link}
-                to="/"
-              >
-                {suggest}
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </Box>
+      {data && search && (
+        <List className={clsx(classes.list)}>
+          {data.map((suggest, i) => (
+            <ListItem
+              key={i}
+              className={classes.listItem}
+              component={Link}
+              to="/"
+            >
+              {suggest}
+            </ListItem>
+          ))}
+        </List>
+      )}
     </Box>
   );
 }

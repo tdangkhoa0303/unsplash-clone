@@ -113,7 +113,8 @@ function Menu({ Trigger = MenuIcon, children, anchor = "right" }) {
   }))();
 
   const handleClickOutside = (event) => {
-    if (!container.current.contains(event.target)) setVisible(false);
+    if (container.current && !container.current.contains(event.target))
+      setVisible(false);
   };
 
   return (

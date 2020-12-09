@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 
-function IconButton({ children, variant, className }) {
+function IconButton({ children, variant, className, ...props }) {
   let styles;
   switch (variant) {
     case "bordered":
@@ -27,6 +27,7 @@ function IconButton({ children, variant, className }) {
   }
   const classes = makeStyles((theme) => ({
     button: {
+      outline: "none",
       boxShadow: "0 1px 2px rgba(0,0,0,.06)",
       height: theme.spacing(4),
       padding: theme.spacing(0, 1.5),
@@ -47,7 +48,9 @@ function IconButton({ children, variant, className }) {
   }))();
 
   return (
-    <button className={clsx(classes.button, className)}>{children}</button>
+    <button className={clsx(classes.button, className)} {...props}>
+      {children}
+    </button>
   );
 }
 
