@@ -73,6 +73,11 @@ function Modal({ children, className, onClose, visible = true, ...props }) {
     onClose();
   };
 
+  const handleCloseButton = (event) => {
+    event.stopPropagation();
+    onClose();
+  };
+
   const handleClickOnModal = (event) => event.stopPropagation();
 
   return (
@@ -82,7 +87,7 @@ function Modal({ children, className, onClose, visible = true, ...props }) {
       ref={content}
       {...props}
     >
-      <IconButton onClick={onClose} className={classes.close}>
+      <IconButton onClick={handleCloseButton} className={classes.close}>
         <Close color="inherit" />
       </IconButton>
       <Box className={classes.content} onClick={handleClickOnModal}>

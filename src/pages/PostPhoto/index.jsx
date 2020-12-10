@@ -20,10 +20,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#ffffff",
     borderRadius: theme.spacing(0.5),
     padding: theme.spacing(1, 0),
-
-    [theme.breakpoints.down("md")]: {
-      minHeight: "100%",
-    },
+    minHeight: "100%",
+    height: "fit-content",
   },
 
   submitTitle: {
@@ -252,25 +250,27 @@ function PostPhoto({}) {
                     />
                   </Box>
                 </Grid>
-                <Grid item xs={12}>
-                  <ResponsiveMasonry
-                    columnsCountBreakPoints={{
-                      [theme.breakpoints.values["md"]]: 3,
-                      [theme.breakpoints.values["xs"]]: 1,
-                    }}
-                  >
-                    <Masonry gutter="10px">
-                      {Object.values(data).map((upload) => (
-                        <UploadCard
-                          key={upload.id}
-                          data={upload}
-                          handleFieldChange={handleFieldChange}
-                          removePhoto={removePhoto}
-                        />
-                      ))}
-                    </Masonry>
-                  </ResponsiveMasonry>
-                </Grid>
+                {Object.values(data).length > 0 && (
+                  <Grid item xs={12}>
+                    <ResponsiveMasonry
+                      columnsCountBreakPoints={{
+                        [theme.breakpoints.values["md"]]: 3,
+                        [theme.breakpoints.values["xs"]]: 1,
+                      }}
+                    >
+                      <Masonry gutter="10px">
+                        {Object.values(data).map((upload) => (
+                          <UploadCard
+                            key={upload.id}
+                            data={upload}
+                            handleFieldChange={handleFieldChange}
+                            removePhoto={removePhoto}
+                          />
+                        ))}
+                      </Masonry>
+                    </ResponsiveMasonry>
+                  </Grid>
+                )}
               </Grid>
             </Box>
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { useLocation } from "react-router";
 import { Switch, Route } from "react-router-dom";
@@ -58,18 +58,21 @@ function App() {
   let previousLocation = useRef();
   const location = useLocation();
 
+  const [isModal, setIsModal] = useState(false);
+
   useEffect(() => {
     if (!(location.state && location.state.modal)) {
       previousLocation.current = location;
     }
   }, []);
 
-  useEffect(() => {}, [location]);
-
-  const isModal =
-    location.state &&
-    location.state.modal &&
-    previousLocation.current !== location;
+  useEffect(() => {
+    setIsModal(
+      location.state &&
+        location.state.modal &&
+        previousLocation.current !== location
+    );
+  }, [location]);
 
   return (
     <div className="App">

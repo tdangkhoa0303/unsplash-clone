@@ -73,26 +73,16 @@ function Card({ photo: { _id, id, likes = [], author, media, alt } = {} }) {
   const classes = useStyles();
   const {
     auth: { user },
+    reactPhoto,
   } = useContext(Context);
   const history = useHistory();
 
-  const [liked, setLiked] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      setLiked(likes.includes(user._id));
-    }
-  }, [user, likes]);
-
   const handleReactPhoto = async (e, id) => {
     e.stopPropagation();
-    try {
-      setLiked((liked) => !liked);
-      const { data } = await reactPhoto(id);
-    } catch (err) {
-      console.log(err.message);
-    }
+    reactPhoto(id);
   };
+
+  useEffect(() => console.log(likes), [likes]);
 
   return (
     <Box className={classes.root}>
@@ -120,7 +110,11 @@ function Card({ photo: { _id, id, likes = [], author, media, alt } = {} }) {
         <Box display="flex" justifyContent="flex-end">
           <Box mr={1}>
             <IconButton onClick={(e) => handleReactPhoto(e, _id)}>
-              <FavoriteOutlined className={clsx(liked && classes.liked)} />
+              <FavoriteOutlined
+                className={clsx(
+                  user && likes.includes(user._id) && classes.liked
+                )}
+              />
             </IconButton>
           </Box>
           <Box>

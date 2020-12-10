@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, Fragment } from "react";
-import { useHistory, useParams } from "react-router";
+import { useHistory, useParams, useRouteMatch } from "react-router";
 import clsx from "clsx";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,7 +16,6 @@ import {
 } from "../../components/UI";
 import { FavoriteOutlined, Add, Room } from "@material-ui/icons";
 
-import { getPhoto, reactPhoto } from "../../utils/api";
 import Context from "../../Context";
 
 const useStyles = makeStyles((theme) => ({
@@ -84,50 +83,33 @@ function Photo() {
   const { id } = useParams();
   const {
     auth: { user },
+    reactPhoto,
+    getPhoto,
   } = useContext(Context);
 
-  const [photo, setPhoto] = useState({});
-
-  const [fetching, setFetching] = useState(true);
-  const [error, setError] = useState();
-  const [liked, setLiked] = useState();
+  const [photo, setPhoto] = useState();
 
   useEffect(() => {
     const fetchPhoto = async () => {
-      try {
-        const { data } = await getPhoto(id);
-        if (data.status === "success") {
-          setPhoto((photo) => ({
-            ...photo,
-            ...data.data.photo,
-          }));
-          setFetching(false);
-          setLiked(data.data.photo.likes.includes(user._id));
-        }
-      } catch (err) {
-        setError(err.message);
-      }
+      const data = await getPhoto(id);
+      if (data) setPhoto(data);
     };
 
     fetchPhoto();
   }, []);
 
+  useEffect(() => console.log(photo), [photo]);
+
   const handleReactPhoto = async (e, id) => {
     e.stopPropagation();
-    try {
-      setLiked((liked) => !liked);
-      const { data } = await reactPhoto(id);
-    } catch (err) {
-      console.log(err.message);
-    }
+    reactPhoto(id);
   };
 
   return (
     <Modal visible={true} onClose={(e) => history.goBack()}>
       <Box className={classes.root}>
-        {!fetching && (
+        {photo && (
           <Fragment>
-            {" "}
             <Box
               p={2}
               display="flex"
@@ -168,7 +150,11 @@ function Photo() {
                         variant="bordered"
                       >
                         <FavoriteOutlined
-                          className={clsx(liked && classes.liked)}
+                          className={clsx(
+                            photo.likes &&
+                              photo.likes.includes(user._id) &&
+                              classes.liked
+                          )}
                         />
                       </IconButton>
                     </Box>
