@@ -9,6 +9,7 @@ import {
   Grid,
   Avatar,
   IconButton,
+  Typography,
 } from "@material-ui/core";
 import {
   MoreHoriz,
@@ -222,6 +223,7 @@ function Header() {
 
   const {
     auth: { isAuth, user },
+    setAuth,
   } = useContext(Context);
 
   return (

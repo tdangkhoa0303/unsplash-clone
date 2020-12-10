@@ -26,3 +26,5 @@ export const getPhotos = (page = 1) => api.get(`/photo?p=${page}`);
 export const reactPhoto = (id) => api.get(`/photo/react?photo=${id}`);
 
 export const getPhoto = (id) => api.get(`/photo/single?id=${id}`);
+
+export const postAvatar = (avatar) => api.post("/profile/avatar", avatar);

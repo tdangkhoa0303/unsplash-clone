@@ -85,20 +85,23 @@ function Photo() {
     auth: { user },
     reactPhoto,
     getPhoto,
+    photos,
   } = useContext(Context);
 
   const [photo, setPhoto] = useState();
 
   useEffect(() => {
     const fetchPhoto = async () => {
-      const data = await getPhoto(id);
-      if (data) setPhoto(data);
+      await getPhoto(id);
     };
 
     fetchPhoto();
+    setPhoto(photos.data[id]);
   }, []);
 
-  useEffect(() => console.log(photo), [photo]);
+  useEffect(() => {
+    if (photos.data[id]) setPhoto(photos.data[id]);
+  }, [photos]);
 
   const handleReactPhoto = async (e, id) => {
     e.stopPropagation();
@@ -151,7 +154,8 @@ function Photo() {
                       >
                         <FavoriteOutlined
                           className={clsx(
-                            photo.likes &&
+                            user &&
+                              photo.likes &&
                               photo.likes.includes(user._id) &&
                               classes.liked
                           )}
@@ -181,13 +185,13 @@ function Photo() {
                 className={classes.img}
               />
             </Box>
-            {photo.location && (
+            {/* {photo.location && (
               <Box p={2}>
                 <Room />
                 &nbsp;
                 {photo.location.name}
               </Box>
-            )}{" "}
+            )}{" "} */}
           </Fragment>
         )}
       </Box>

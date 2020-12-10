@@ -66,11 +66,13 @@ export function Provider(props) {
         setPhotos((photos) => {
           let photo = photos.data[photoId];
           let likes;
+
           if (!photo.likes.includes(auth.user._id)) {
             likes = [...photo.likes, auth.user._id];
           } else {
             likes = Array.from(new Set(photo.likes).delete(auth.user._id));
           }
+          console.log(likes);
           return {
             ...photos,
             data: {
@@ -89,8 +91,8 @@ export function Provider(props) {
     }
   };
 
-  const getPhoto = async (id) => {
-    const { data } = await api.getPhoto(id);
+  const getPhoto = async (photoId) => {
+    const { data } = await api.getPhoto(photoId);
     if (data.status === "success") {
       const photo = data.data.photo;
 
@@ -117,6 +119,7 @@ export function Provider(props) {
         getPhoto,
         setPhotos,
         reactPhoto,
+        setAuth,
       }}
     >
       {props.children}

@@ -82,8 +82,6 @@ function Card({ photo: { _id, id, likes = [], author, media, alt } = {} }) {
     reactPhoto(id);
   };
 
-  useEffect(() => console.log(likes), [likes]);
-
   return (
     <Box className={classes.root}>
       <Box

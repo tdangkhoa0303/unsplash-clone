@@ -11,7 +11,7 @@ function ImageGrid({ children }) {
         [theme.breakpoints.values["xs"]]: 1,
       }}
     >
-      <Masonry gutter="24px">{children}</Masonry>
+      <Masonry gutter="16px">{children}</Masonry>
     </ResponsiveMasonry>
   );
 }

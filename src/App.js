@@ -3,8 +3,13 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { useLocation } from "react-router";
 import { Switch, Route } from "react-router-dom";
 
-import { Home, Join, Login, PostPhoto, Photo } from "./pages";
-import { AuthRoute, PublicRoute, PrivateFluid } from "./templates";
+import { Home, Join, Login, PostPhoto, Photo, Profile } from "./pages";
+import {
+  AuthRoute,
+  PublicRoute,
+  PrivateFluid,
+  PrivateRoute,
+} from "./templates";
 import { Provider } from "./Context";
 
 const theme = createMuiTheme({
@@ -58,21 +63,16 @@ function App() {
   let previousLocation = useRef();
   const location = useLocation();
 
-  const [isModal, setIsModal] = useState(false);
-
   useEffect(() => {
     if (!(location.state && location.state.modal)) {
       previousLocation.current = location;
     }
   }, []);
 
-  useEffect(() => {
-    setIsModal(
-      location.state &&
-        location.state.modal &&
-        previousLocation.current !== location
-    );
-  }, [location]);
+  const isModal =
+    location.state &&
+    location.state.modal &&
+    previousLocation.current !== location;
 
   return (
     <div className="App">
@@ -86,13 +86,18 @@ function App() {
           <Route
             exact
             path="/photo/:id"
-            component={() => <PrivateFluid Component={Photo} />}
+            component={() => <PublicRoute Component={Photo} />}
           />
           <Switch location={isModal ? previousLocation.current : location}>
             <Route
               exact
               path="/"
               component={() => <PublicRoute Component={Home} />}
+            />
+            <Route
+              exact
+              path="/profile"
+              component={() => <PrivateRoute Component={Profile} />}
             />
             <Route
               exact
