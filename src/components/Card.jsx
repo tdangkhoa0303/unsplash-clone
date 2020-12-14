@@ -121,7 +121,7 @@ function Card({ photo: { _id, id, likes = [], author, media, alt } = {} }) {
             </IconButton>
           </Box>
         </Box>
-        <Box display="flex" justifyContent="space-between">
+        {/* <Box display="flex" justifyContent="space-between">
           <AuthorBox author={author}>
             <Box display="flex" alignItems="center">
               <Avatar
@@ -136,7 +136,7 @@ function Card({ photo: { _id, id, likes = [], author, media, alt } = {} }) {
           <IconButton>
             <ArrowDownward />
           </IconButton>
-        </Box>
+        </Box> */}
       </Box>
     </Box>
   );
